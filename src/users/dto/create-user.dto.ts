@@ -4,15 +4,15 @@ export class CreateUserDto {
   @IsNotEmpty()
   @Length(2, 30, { message: 'Строка должна включать от 2 до 30 символов' })
   @IsString()
-  public username: string;
+  username: string;
   @IsNotEmpty()
   @Length(2, 200, { message: 'Строка должна включать от 2 до 200 символов' })
   @IsString()
-  public about?: string;
+  about?: string;
   @IsUrl()
-  public avatar?: string;
+  avatar?: string;
   @IsEmail()
-  public email: string;
+  email: string;
   @IsNotEmpty()
-  public password: string;
+  password: string;
 }

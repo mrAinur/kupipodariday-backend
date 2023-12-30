@@ -1,0 +1,65 @@
+import { IsInt, IsNotEmpty, IsString, IsUrl, Length } from 'class-validator';
+import { Offer } from '../../offers/entities/offer.entity';
+import { Wishlist } from '../../wishlists/entities/wishlist.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { User } from '../../users/entities/user.entity';
+
+@Entity()
+export class Wish {
+  @PrimaryGeneratedColumn()
+  id: number;
+  @CreateDateColumn()
+  createdAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
+  @Column({
+    type: 'varchar',
+    length: 250,
+  })
+  @IsNotEmpty()
+  @Length(1, 250, { message: 'Строка должна включать от 1 до 250 символов' })
+  @IsString()
+  name: string;
+  @Column({
+    type: 'varchar',
+  })
+  @IsUrl()
+  @IsNotEmpty()
+  link: string;
+  @Column({
+    type: 'varchar',
+  })
+  @IsNotEmpty()
+  @IsUrl()
+  image: string;
+  @Column('numeric', { scale: 2 })
+  @IsNotEmpty()
+  price: number;
+  @Column('numeric', { scale: 2 })
+  raised: number;
+  @ManyToOne(() => User, (user) => user.wishes)
+  owner: User;
+  @Column({
+    type: 'varchar',
+    length: 1024,
+  })
+  @IsNotEmpty()
+  @Length(1, 1024, { message: 'Строка должна включать от 1 до 1024 символов' })
+  @IsString()
+  description: string;
+  @OneToMany(() => Offer, (offer) => offer.item)
+  offers: Offer[];
+  @Column('int')
+  @IsInt()
+  copied: number;
+  @ManyToOne(() => Wishlist, (wishlist) => wishlist.items)
+  wishlist: Wishlist;
+}

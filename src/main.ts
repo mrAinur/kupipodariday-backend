@@ -5,6 +5,8 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import * as cookieParser from 'cookie-parser';
 
+const { port = 3002 } = process.env;
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
@@ -22,7 +24,7 @@ async function bootstrap() {
   // первый аргумент - путь, по которому будет доступна
   // веб-страница с документацией Swagger
   SwaggerModule.setup('/api/docs', app, document);
-  await app.listen(3000);
+  await app.listen(port);
 }
 bootstrap();
 

@@ -1,26 +1,28 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
-import { UpdateWishDto } from './dto/update-wish.dto';
+// import { UpdateWishDto } from './dto/update-wish.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Wish } from './entities/wish.entity';
+import { Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class WishesService {
-  create(createWishDto: CreateWishDto) {
-    return 'This action adds a new wish';
-  }
-
-  findAll() {
-    return `This action returns all wishes`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} wish`;
-  }
-
-  update(id: number, updateWishDto: UpdateWishDto) {
-    return `This action updates a #${id} wish`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} wish`;
-  }
+	constructor(
+		@InjectRepository(Wish)
+		private wishRepository: Repository<Wish>,
+		@InjectRepository(User)
+		private usersRepository: Repository<User>
+	) {}
+	async create(createWishDto: CreateWishDto, userInfo) {
+		const user = await this.usersRepository.findOneBy({ id: userInfo.id });
+		const wish = await this.wishRepository.create({
+			...createWishDto,
+			owner: user
+		});
+		console.log(user.wishes);
+		await user.wishes.push(wish);
+		await this.usersRepository.save(user);
+		return await this.wishRepository.save(wish);
+	}
 }

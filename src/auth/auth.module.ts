@@ -7,7 +7,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { LocalStrategy } from './local/local.strategy';
 import { AuthController } from './auth.controller';
-import { YandexStrategy } from './yandex/yandex.strategy';
 
 @Module({
 	imports: [
@@ -22,13 +21,7 @@ import { YandexStrategy } from './yandex/yandex.strategy';
 		})
 	],
 	controllers: [AuthController],
-	providers: [
-		AuthService,
-		JwtStrategy,
-		LocalStrategy,
-		ConfigService,
-		YandexStrategy
-	],
+	providers: [AuthService, JwtStrategy, LocalStrategy, ConfigService],
 	exports: [AuthService]
 })
 export class AuthModule {}

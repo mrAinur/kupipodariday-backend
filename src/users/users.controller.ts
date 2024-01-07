@@ -45,8 +45,7 @@ export class UsersController {
 	@UseGuards(JwtGuard)
 	@Get('me/wishes')
 	getUserWishes(@Req() req) {
-		console.log(`Вишлист - ${req.user.wishlist}`);
-		return req.user.wishlist;
+		return this.usersService.getUserWishes(req.user);
 	}
 
 	@UseGuards(JwtGuard)

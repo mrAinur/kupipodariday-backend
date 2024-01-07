@@ -4,18 +4,21 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { Profile } from 'passport-yandex';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Wishlist } from '../wishlists/entities/wishlist.entity';
 
 @Injectable()
 export class UsersService {
 	constructor(
 		@InjectRepository(User)
-		private usersRepository: Repository<User>
+		private usersRepository: Repository<User>,
+		@InjectRepository(User)
+		private wishlistRepository: Repository<Wishlist>
 	) {}
 
 	async create(createUserDto: CreateUserDto) {
 		const user = await this.usersRepository.create(createUserDto);
+		// const wishlist = await this.wishlistRepository.create();
 		return await this.usersRepository.save(user);
 	}
 
@@ -25,11 +28,6 @@ export class UsersService {
 
 	async findByUsername(username: string) {
 		const user = await this.usersRepository.findOneBy({ username });
-		return user;
-	}
-
-	async findByEmail(email: string) {
-		const user = await this.usersRepository.findOneBy({ email });
 		return user;
 	}
 
@@ -44,12 +42,11 @@ export class UsersService {
 		return this.usersRepository.find(query);
 	}
 
-	async createFromYandex(profile: Profile) {
-		const user = await this.usersRepository.create({
-			username: profile.username,
-			email: profile.default_email,
-			password: profile.login
+	async getUserWishes(user: User) {
+		const userWishes = await this.usersRepository.findOne({
+			where: { id: user.id },
+			relations: { wishes: true }
 		});
-		return await this.usersRepository.save(user);
+		return userWishes.wishes;
 	}
 }

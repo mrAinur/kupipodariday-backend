@@ -7,7 +7,9 @@ import {
 	// Param,
 	// Delete,
 	Req,
-	UseGuards
+	UseGuards,
+	Get,
+	Param
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
@@ -23,5 +25,11 @@ export class WishesController {
 	@Post()
 	makeNewWish(@Body() createWishDTO: CreateWishDto, @Req() req: Request) {
 		return this.wishesService.create(createWishDTO, req.user);
+	}
+
+	@UseGuards(JwtGuard)
+	@Get(':id')
+	getWish(@Param() queryParam: { id: string }, @Req() req) {
+		return this.wishesService.getWish(+queryParam.id, req.user);
 	}
 }

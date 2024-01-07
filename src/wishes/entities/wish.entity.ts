@@ -43,7 +43,7 @@ export class Wish {
 	@Column('numeric', { scale: 2 })
 	@IsNotEmpty()
 	price: number;
-	@Column('numeric', { scale: 2, nullable: true })
+	@Column('numeric', { scale: 2, nullable: true, default: 0 })
 	raised: number;
 	@ManyToOne(() => User, user => user.wishes)
 	owner: User;
@@ -57,7 +57,7 @@ export class Wish {
 	description: string;
 	@OneToMany(() => Offer, offer => offer.item)
 	offers: Offer[];
-	@Column('int', { nullable: true })
+	@Column('int', { nullable: true, default: 0 })
 	@IsInt()
 	copied: number;
 	@ManyToOne(() => Wishlist, wishlist => wishlist.items)

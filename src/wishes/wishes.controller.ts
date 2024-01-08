@@ -5,7 +5,7 @@ import {
 	Body,
 	// Patch,
 	// Param,
-	// Delete,
+	Delete,
 	Req,
 	UseGuards,
 	Get,
@@ -28,8 +28,26 @@ export class WishesController {
 	}
 
 	@UseGuards(JwtGuard)
+	@Delete(':id')
+	removeWish(@Param() queryParam: { id: string }) {
+		return this.wishesService.removeWish(+queryParam.id);
+	}
+
+	@UseGuards(JwtGuard)
+	@Get('last')
+	getLastWishes() {
+		return this.wishesService.getLastWishes();
+	}
+
+	@UseGuards(JwtGuard)
+	@Get('top')
+	getTopWishes() {
+		return this.wishesService.getTopWishes();
+	}
+
+	@UseGuards(JwtGuard)
 	@Get(':id')
-	getWish(@Param() queryParam: { id: string }, @Req() req) {
-		return this.wishesService.getWish(+queryParam.id, req.user);
+	getWish(@Param() queryParam: { id: string }) {
+		return this.wishesService.getWish(+queryParam.id);
 	}
 }

@@ -26,17 +26,29 @@ export class WishesService {
 			...createWishDto,
 			owner: user
 		});
-		console.log(`${user.wishes} и список подарков ${user.wishlists}`);
 		user.wishes.push(wish);
 		await this.usersRepository.save(user);
 		return await this.wishRepository.save(wish);
 	}
 
-	async getWish(id: number, user: User) {
-		const userWish = await this.usersRepository.findOne({
-			where: { id: user.id },
-			relations: { wishes: true }
+	async getWish(id: number) {
+		const userWish = await this.wishRepository.findOne({
+			where: { id },
+			relations: { owner: true }
 		});
-		return userWish.wishes.find(item => item.id === id);
+		return userWish;
+	}
+
+	async removeWish(id: number) {
+		const wish = await this.wishRepository.findOne({ where: { id } });
+		return await this.wishRepository.remove(wish);
+	}
+
+	async getLastWishes() {
+		return this.wishRepository.find({ order: { createdAt: 'DESC' }, take: 40 });
+	}
+
+	async getTopWishes() {
+		return this.wishRepository.find({ order: { copied: 'DESC' }, take: 20 });
 	}
 }

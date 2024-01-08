@@ -29,9 +29,9 @@ export class Wishlist {
 	name: string;
 	@Column({
 		type: 'varchar',
-		length: 1500
+		length: 1500,
+		default: 'Пока пользователь не создал описание для коллекции'
 	})
-	@IsNotEmpty()
 	@Length(1, 1500, { message: 'Строка должна включать от 1 до 1500 символов' })
 	@IsString()
 	description: string;

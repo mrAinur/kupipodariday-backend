@@ -23,23 +23,15 @@ export class UsersController {
 	}
 
 	@UseGuards(JwtGuard)
-	@Get(':id')
-	findOne(@Req() req) {
-		return req.user;
-	}
-
-	@UseGuards(JwtGuard)
 	@Patch('me')
 	editUser(@Body() newUserData: UpdateUserDto, @Req() req) {
 		return this.usersService.editUser(newUserData, req.user);
 	}
 
 	@UseGuards(JwtGuard)
-	@Post('find')
-	getUsers(@Body() query) {
-		return this.usersService.getUsers({
-			where: [{ email: query.query }, { username: query.query }]
-		});
+	@Get(':id')
+	findOne(@Req() req) {
+		return req.user;
 	}
 
 	@UseGuards(JwtGuard)
@@ -52,7 +44,16 @@ export class UsersController {
 	@Get(':id/wishes')
 	getUser(@Param() userQuery) {
 		return this.usersService.getUsers({
-			where: [{ email: userQuery.query }, { username: userQuery.query }]
+			where: [{ email: userQuery.id }, { username: userQuery.id }],
+			relations: { wishes: true }
+		});
+	}
+
+	@UseGuards(JwtGuard)
+	@Post('find')
+	getUsers(@Body() query) {
+		return this.usersService.getUsers({
+			where: [{ email: query.query }, { username: query.query }]
 		});
 	}
 }

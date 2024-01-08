@@ -18,7 +18,6 @@ export class UsersService {
 
 	async create(createUserDto: CreateUserDto) {
 		const user = await this.usersRepository.create(createUserDto);
-		// const wishlist = await this.wishlistRepository.create();
 		return await this.usersRepository.save(user);
 	}
 
@@ -39,7 +38,8 @@ export class UsersService {
 	}
 
 	async getUsers(query: FindManyOptions<User>) {
-		return this.usersRepository.find(query);
+		const wishes = await this.usersRepository.findOne(query);
+		return wishes.wishes;
 	}
 
 	async getUserWishes(user: User) {

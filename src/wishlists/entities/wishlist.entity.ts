@@ -4,8 +4,8 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	ManyToMany,
 	ManyToOne,
-	OneToMany,
 	PrimaryGeneratedColumn,
 	UpdateDateColumn
 } from 'typeorm';
@@ -41,7 +41,7 @@ export class Wishlist {
 	@IsUrl()
 	@IsNotEmpty()
 	image: string;
-	@OneToMany(() => Wish, wish => wish.wishlist)
+	@ManyToMany(() => Wish, wish => wish.wishlists)
 	items: Wish[];
 	@ManyToOne(() => User, user => user.wishlists)
 	owner: User;

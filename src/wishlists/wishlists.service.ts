@@ -21,7 +21,7 @@ export class WishlistsService {
 	async createWishlist(createWishlistDto: CreateWishlistDto, id: number) {
 		const user = await this.usersRepository.findOne({
 			where: { id },
-			relations: { wishes: true }
+			relations: { wishes: true, wishlists: true }
 		});
 		const wishes = createWishlistDto.itemsId.map(itemId =>
 			user.wishes.find(item => item.id === itemId)
@@ -32,6 +32,13 @@ export class WishlistsService {
 			image: createWishlistDto.image,
 			owner: user
 		});
+		user.wishlists.push(wishlist);
+		await this.usersRepository.save(user);
+		// wishes.forEach(item => {
+		// 	console.log(1);
+		// 	item.wishlist.push(wishlist);
+		// 	this.wishRepository.save(item);
+		// });
 		return await this.wishlistRepository.save(wishlist);
 	}
 

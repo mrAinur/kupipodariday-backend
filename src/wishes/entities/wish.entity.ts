@@ -3,6 +3,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	ManyToMany,
 	ManyToOne,
 	OneToMany,
 	PrimaryGeneratedColumn,
@@ -60,6 +61,6 @@ export class Wish {
 	@Column('int', { nullable: true, default: 0 })
 	@IsInt()
 	copied: number;
-	@ManyToOne(() => Wishlist, wishlist => wishlist.items)
-	wishlist: Wishlist;
+	@ManyToMany(() => Wishlist, wishlist => wishlist.items)
+	wishlists: Wishlist[];
 }

@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
-// import { UpdateWishDto } from './dto/update-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
 import { Repository } from 'typeorm';
 import { User } from '../users/entities/user.entity';
 import { Wishlist } from '../wishlists/entities/wishlist.entity';
+import { UpdateWishDto } from './dto/update-wish.dto';
 
 @Injectable()
 export class WishesService {
@@ -31,11 +31,13 @@ export class WishesService {
 		return await this.wishRepository.save(wish);
 	}
 
-	async getWish(id: number) {
+	async getWish(id: number, user: User) {
 		const userWish = await this.wishRepository.findOne({
 			where: { id },
-			relations: { owner: true }
+			relations: { owner: true, offers: true }
 		});
+		if (userWish.owner.id !== user.id)
+			userWish.offers = userWish.offers.filter(item => !item.hidden);
 		return userWish;
 	}
 
@@ -50,5 +52,40 @@ export class WishesService {
 
 	async getTopWishes() {
 		return this.wishRepository.find({ order: { copied: 'DESC' }, take: 20 });
+	}
+
+	async copyWish(id: number, user: User) {
+		const copyWish = await this.wishRepository.findOne({ where: { id } });
+		copyWish.copied++;
+		const newWish = await this.wishRepository.create({
+			name: copyWish.name,
+			link: copyWish.link,
+			image: copyWish.image,
+			price: copyWish.price,
+			description: copyWish.description,
+			owner: user,
+			raised: 0
+		});
+		await this.wishRepository.save(copyWish);
+		return await this.wishRepository.save(newWish);
+	}
+
+	async editWish(user: User, updateWishDto: UpdateWishDto, id: number) {
+		const wish = await this.wishRepository.findOne({
+			where: { id },
+			relations: { owner: true }
+		});
+		if (user.id !== wish.owner.id) {
+			throw new BadRequestException({
+				description: 'Вы можете редактировать только свои подарки'
+			});
+		} else if (Number(wish.raised) !== 0) {
+			throw new BadRequestException({
+				description:
+					'Вы не можете редактировать подарки, на которые уже скинулись пользователи'
+			});
+		}
+
+		return await this.wishRepository.save({ ...wish, ...updateWishDto });
 	}
 }

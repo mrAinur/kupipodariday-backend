@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { User } from '../users/entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -16,14 +17,15 @@ export class AuthService {
 	}
 
 	async validatePassword(username: string, password: string) {
-		const user = await this.usersService.findByUsername(username);
-
-		/* В идеальном случае пароль обязательно должен быть захэширован */
-		if (user && user.password === password) {
-			/* Исключаем пароль из результата */
-			delete user.password;
-			return user;
+		const user = await this.usersService.findUserForValidatePassword({
+			where: { username }
+		});
+		if (!(await bcrypt.compare(password, user.password)) || !user) {
+			throw new UnauthorizedException({
+				description: 'Неверный логин или пароль'
+			});
 		}
-		return null;
+		delete user.password;
+		return user;
 	}
 }

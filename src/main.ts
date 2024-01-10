@@ -4,7 +4,6 @@ import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
 import * as cookieParser from 'cookie-parser';
-// import helmet from 'helmet';
 
 const { port = 3002 } = process.env;
 
@@ -13,11 +12,6 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe({ transform: true }));
 	app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 	app.use(cookieParser());
-	// app.use(
-	// 	helmet({
-	// 		crossOriginResourcePolicy: false
-	// 	})
-	// );
 
 	const config = new DocumentBuilder()
 		.setTitle('Название вашего API сервиса')

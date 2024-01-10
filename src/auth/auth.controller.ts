@@ -3,9 +3,8 @@ import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 import { LocalGuard } from './local/local.guard';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-// import { AuthGuard } from '@nestjs/passport';
 
-@Controller()
+@Controller('auth')
 export class AuthController {
 	constructor(
 		private usersService: UsersService,
@@ -29,16 +28,4 @@ export class AuthController {
 		const user = await this.usersService.create(createUserDto);
 		return this.authService.auth(user);
 	}
-
-	// @UseGuards(AuthGuard('yandex'))
-	// @Get('yandex')
-	// yandex() {
-	// 	/* Этот метод можно оставить пустым, так как Passport перенаправит пользователя в Яндекс */
-	// }
-
-	// @UseGuards(AuthGuard('yandex'))
-	// @Get('yandex/callback')
-	// yandexCallback(@Req() req) {
-	// 	return this.authService.auth(req.user);
-	// }
 }

@@ -1,4 +1,4 @@
-import { IsBoolean } from 'class-validator';
+import { IsBoolean, IsString } from 'class-validator';
 import { Wish } from '../../wishes/entities/wish.entity';
 import {
 	Column,
@@ -29,4 +29,7 @@ export class Offer {
 	})
 	@IsBoolean()
 	hidden: boolean;
+	@Column()
+	@IsString()
+	name: string;
 }

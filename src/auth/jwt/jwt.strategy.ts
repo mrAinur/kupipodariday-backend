@@ -24,11 +24,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	 */
 	async validate(jwtPayload: { sub: number }) {
 		/* В subject токена будем передавать идентификатор пользователя */
-		const user = await this.usersService.findOneById(jwtPayload.sub);
+		const user = await this.usersService.findUserForValidatePassword({
+			where: { id: jwtPayload.sub }
+		});
 		if (!user) {
 			throw new UnauthorizedException();
 		}
-
+		delete user.password;
 		return user;
 	}
 }

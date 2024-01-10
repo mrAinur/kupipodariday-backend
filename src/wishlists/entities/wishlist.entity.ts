@@ -4,6 +4,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	JoinTable,
 	ManyToMany,
 	ManyToOne,
 	PrimaryGeneratedColumn,
@@ -42,6 +43,7 @@ export class Wishlist {
 	@IsNotEmpty()
 	image: string;
 	@ManyToMany(() => Wish, wish => wish.wishlists)
+	@JoinTable()
 	items: Wish[];
 	@ManyToOne(() => User, user => user.wishlists)
 	owner: User;

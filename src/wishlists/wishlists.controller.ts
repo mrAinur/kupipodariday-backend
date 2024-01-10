@@ -1,20 +1,14 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
 	Param,
 	Post,
 	Req,
 	UseGuards
-	// Patch,
-	// Param,
-	// Delete,
-	// UseGuards,
-	// Req
 } from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
-// import { CreateWishlistDto } from './dto/create-wishlist.dto';
-// import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { JwtGuard } from '../auth/jwt/jwt.guard';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 
@@ -38,5 +32,11 @@ export class WishlistsController {
 	@Get(':id')
 	getWishlist(@Param() userQuery: { id: string }) {
 		return this.wishlistsService.getWishlist(+userQuery.id);
+	}
+
+	@UseGuards(JwtGuard)
+	@Delete(':id')
+	removeWishlist(@Param() userQuery: { id: string }) {
+		return this.wishlistsService.removeWishlist(+userQuery.id);
 	}
 }

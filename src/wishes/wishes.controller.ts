@@ -1,21 +1,19 @@
 import {
 	Controller,
-	// Get,
 	Post,
 	Body,
-	// Patch,
-	// Param,
 	Delete,
 	Req,
 	UseGuards,
 	Get,
-	Param
+	Param,
+	Patch
 } from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
-// import { UpdateWishDto } from './dto/update-wish.dto';
 import { Request } from 'express';
 import { JwtGuard } from '../auth/jwt/jwt.guard';
+import { UpdateWishDto } from './dto/update-wish.dto';
 
 @Controller('wishes')
 export class WishesController {
@@ -33,13 +31,11 @@ export class WishesController {
 		return this.wishesService.removeWish(+queryParam.id);
 	}
 
-	@UseGuards(JwtGuard)
 	@Get('last')
 	getLastWishes() {
 		return this.wishesService.getLastWishes();
 	}
 
-	@UseGuards(JwtGuard)
 	@Get('top')
 	getTopWishes() {
 		return this.wishesService.getTopWishes();
@@ -47,7 +43,23 @@ export class WishesController {
 
 	@UseGuards(JwtGuard)
 	@Get(':id')
-	getWish(@Param() queryParam: { id: string }) {
-		return this.wishesService.getWish(+queryParam.id);
+	getWish(@Param() queryParam: { id: string }, @Req() req) {
+		return this.wishesService.getWish(+queryParam.id, req.user);
+	}
+
+	@UseGuards(JwtGuard)
+	@Post(':id/copy')
+	copyWish(@Param() queryParam: { id: string }, @Req() req) {
+		return this.wishesService.copyWish(+queryParam.id, req.user);
+	}
+
+	@UseGuards(JwtGuard)
+	@Patch(':id')
+	editWish(
+		@Req() req,
+		@Body() updateWishDto: UpdateWishDto,
+		@Param() queryParam: { id: string }
+	) {
+		return this.wishesService.editWish(req.user, updateWishDto, +queryParam.id);
 	}
 }

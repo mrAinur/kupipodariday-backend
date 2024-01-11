@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindManyOptions, Repository } from 'typeorm';
@@ -22,7 +22,14 @@ export class UsersService {
 			...createUserDto,
 			password
 		});
-		return await this.usersRepository.save(user);
+		try {
+			return await this.usersRepository.save(user);
+		} catch (err) {
+			throw new ConflictException({
+				description:
+					'Пользователь с такой почтой или логином уже существует, пожалуйста выберите другую почту или логин'
+			});
+		}
 	}
 
 	async findByUsername(username: string) {
@@ -36,10 +43,17 @@ export class UsersService {
 	}
 
 	async editUser(editUserData: UpdateUserDto, user) {
-		return await this.usersRepository.save({
-			...user,
-			...editUserData
-		});
+		try {
+			return await this.usersRepository.save({
+				...user,
+				...editUserData
+			});
+		} catch (err) {
+			throw new ConflictException({
+				description:
+					'Пользователь с такой почтой или логином уже существует, пожалуйста выберите другую почту или логин'
+			});
+		}
 	}
 
 	async getUsers(query: FindManyOptions<User>) {

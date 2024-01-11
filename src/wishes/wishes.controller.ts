@@ -27,8 +27,8 @@ export class WishesController {
 
 	@UseGuards(JwtGuard)
 	@Delete(':id')
-	removeWish(@Param() queryParam: { id: string }) {
-		return this.wishesService.removeWish(+queryParam.id);
+	removeWish(@Param() queryParam: { id: string }, @Req() req) {
+		return this.wishesService.removeWish(+queryParam.id, +req.user.id);
 	}
 
 	@Get('last')

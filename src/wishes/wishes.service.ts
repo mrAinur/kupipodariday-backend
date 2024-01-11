@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+	BadRequestException,
+	ConflictException,
+	Injectable
+} from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Wish } from './entities/wish.entity';
@@ -41,9 +45,15 @@ export class WishesService {
 		return userWish;
 	}
 
-	async removeWish(id: number) {
-		const wish = await this.wishRepository.findOne({ where: { id } });
-		return await this.wishRepository.remove(wish);
+	async removeWish(id: number, userId: number) {
+		const wish = await this.wishRepository.findOne({
+			where: { id },
+			relations: { owner: true }
+		});
+		if (wish.owner.id === userId) return await this.wishRepository.remove(wish);
+		throw new ConflictException({
+			description: 'Вы не можете удалять чужие подарки'
+		});
 	}
 
 	async getLastWishes() {
@@ -56,6 +66,24 @@ export class WishesService {
 
 	async copyWish(id: number, user: User) {
 		const copyWish = await this.wishRepository.findOne({ where: { id } });
+		const userWishes = await this.usersRepository.findOne({
+			where: { id: user.id },
+			relations: { wishes: true }
+		});
+		const checkCopyWish = userWishes.wishes.find(item => {
+			if (
+				item.name === copyWish.name &&
+				item.price === copyWish.price &&
+				item.link === copyWish.link &&
+				item.image === copyWish.image
+			)
+				return item;
+		});
+		if (checkCopyWish) {
+			throw new BadRequestException({
+				description: 'Вы уже копировали себе этот подарок'
+			});
+		}
 		copyWish.copied++;
 		const newWish = await this.wishRepository.create({
 			name: copyWish.name,

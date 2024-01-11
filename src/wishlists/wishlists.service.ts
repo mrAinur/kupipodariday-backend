@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -47,8 +47,16 @@ export class WishlistsService {
 		return wishlist;
 	}
 
-	async removeWishlist(id: number) {
-		const wishlist = await this.wishlistRepository.findOne({ where: { id } });
-		return await this.wishlistRepository.remove(wishlist);
+	async removeWishlist(id: number, userId: number) {
+		const wishlist = await this.wishlistRepository.findOne({
+			where: { id },
+			relations: { owner: true }
+		});
+		if (wishlist.owner.id === userId) {
+			return await this.wishlistRepository.remove(wishlist);
+		}
+		throw new ConflictException({
+			description: 'Вы не можете удалять чужие списки подарков'
+		});
 	}
 }

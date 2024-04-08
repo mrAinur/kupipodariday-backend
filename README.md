@@ -1,22 +1,22 @@
-## Description
+# Проектная работа по созданию backend части приложения для сервиса подарков
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Функционал:
+1. Возможность проверки авторизации пользователей.
+2. Авторизация и регистрация.
+3. Редактирование данных в базе данных.
 
-## Installation
+## Стэк технологий:
+1. NestJS.
+2. Postgres.
+3. TypeScript.
 
-```bash
-$ npm install
-```
+## Как запустить у себя на компьютере?
+- Сначала необходимо склонировать репозиторий к себе на компьютер.
+- Далее необходимо ввести команду `npm i` в консоли bash.
+- После установки всех зависимостей, запустите команду `npm run start:dev` в той же консоли bash для запуска приложения в режиме разработки<br>,
+либо `npm run start:prod` для запуска проекта в режиме продакшен.
 
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
+### Обратная связь для вопросов и пожеланий
+Вы всегда можете связаться со мной:
+1. В telegram <https://t.me/MrAinur>
+2. По почте mr.ainur.02@mail.ru
